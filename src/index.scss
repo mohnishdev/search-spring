@@ -1,0 +1,61 @@
+$primary: #3525cd;
+$primary-container: #4f46e5;
+$on-primary: #ffffff;
+$secondary: #005338;
+$surface: #f8f9fb;
+$surface-container-low: #f3f4f6;
+$surface-container-lowest: #ffffff;
+$on-surface: #191c1e;
+$on-surface-variant: #464555;
+$on-background: #191c1e;
+$outline-variant: rgba(70, 69, 85, 0.2);
+
+$pg-text-primary: #f0f0f0;
+$pg-text-secondary: #888888;
+$pg-accent-green: #22c55e;
+$pg-accent-badge: #00e5a0;
+$pg-badge-text: #0a0a0a;
+$pg-wishlist-color: #f43f5e;
+$pg-border: #e5e7eb;
+$pg-card-border: rgba(15, 23, 42, 0.08);
+$pg-card-shadow: rgba(15, 23, 42, 0.08);
+$pg-empty-text: #64748b;
+$pg-radius-badge: 6px;
+$pg-radius-button: 50%;
+$pg-transition: 0.22s ease;
+
+$pagination-text-muted: #6b7280;
+$pagination-text-light: #111827;
+$pagination-accent: #4f46e5;
+$pagination-accent-text: #ffffff;
+$pagination-border: #d1d5db;
+$pagination-radius-sm: 8px;
+$pagination-radius-pill: 999px;
+$pagination-transition: 0.18s ease;
+
+$filters-bg: #f3f4f6;
+$filters-text-dark: #191c1e;
+$filters-text-heading: #464555;
+$filters-text-muted: #777587;
+$filters-border-color: rgba(199, 196, 216, 0.2);
+$filters-checkbox-border: #c7c4d8;
+$filters-slider-track: #e2e2e9;
+$filters-pill-bg: #e7e8ea;
+
+$featured-promo-bg: #4f46e5;
+$featured-overlay-color: rgba(53, 37, 205, 0.8);
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: $surface;
+  color: $on-background;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
