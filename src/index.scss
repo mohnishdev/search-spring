@@ -53,9 +53,17 @@ $featured-overlay-color: rgba(53, 37, 205, 0.8);
   padding: 0;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
+  min-height: 100dvh;
   background-color: $surface;
   color: $on-background;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow: hidden;
 }

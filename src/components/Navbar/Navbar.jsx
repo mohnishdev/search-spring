@@ -1,7 +1,7 @@
 import './Navbar.scss';
 import { Grid, Search, User, ShoppingBag, X } from 'lucide-react';
 
-const Navbar = ({ searchText, onSearchTextChange, onSearchSubmit }) => {
+const Navbar = ({ searchText, onSearchTextChange, onSearchSubmit, onSearchClear }) => {
   return (
     <header className="navbar">
       <div className="navbar__inner">
@@ -25,7 +25,7 @@ const Navbar = ({ searchText, onSearchTextChange, onSearchSubmit }) => {
               <button
                 type="button"
                 className="navbar__search-clear"
-                onClick={() => onSearchTextChange('')}
+                onClick={onSearchClear}
                 aria-label="Clear search"
               >
                 <X size={14} />

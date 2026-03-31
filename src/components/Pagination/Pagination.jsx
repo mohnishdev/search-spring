@@ -62,6 +62,11 @@ const Pagination = ({
             <span className="pagination__skeleton pagination__skeleton--page" />
           </div>
           <span className="pagination__skeleton pagination__skeleton--pill" />
+          <div className="pagination__mobile" aria-hidden="true">
+            <span className="pagination__skeleton pagination__skeleton--icon" />
+            <span className="pagination__skeleton pagination__skeleton--mobile-meta" />
+            <span className="pagination__skeleton pagination__skeleton--icon" />
+          </div>
         </div>
       </nav>
     );
@@ -126,6 +131,45 @@ const Pagination = ({
             <polyline points="12 5 19 12 12 19" />
           </svg>
         </button>
+
+        <div className="pagination__mobile">
+          <button
+            className="pagination__icon-btn"
+            onClick={() => handleClick(currentPage - 1)}
+            disabled={currentPage === 1}
+            aria-label="Go to previous page"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+
+          <button
+            className="pagination__mobile-status"
+            onClick={() => handleClick(currentPage === totalPages ? 1 : Math.min(currentPage + 5, totalPages))}
+            aria-label={
+              currentPage === totalPages
+                ? "Go to first page"
+                : `Jump ahead to page ${Math.min(currentPage + 5, totalPages)}`
+            }
+          >
+            <span className="pagination__mobile-kicker">Page</span>
+            <strong>{currentPage}</strong>
+            <span className="pagination__mobile-separator">/</span>
+            <span>{totalPages}</span>
+          </button>
+
+          <button
+            className="pagination__icon-btn pagination__icon-btn--next"
+            onClick={() => handleClick(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            aria-label="Go to next page"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
       </div>
     </nav>
   );

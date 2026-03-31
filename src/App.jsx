@@ -84,6 +84,14 @@ function App() {
     setPage(1)
   }
 
+  const handleClearSearch = () => {
+    setSearchText('')
+    setIsLoading(true)
+    setResults([])
+    setQuery('a')
+    setPage(1)
+  }
+
   const handlePage = (newPage) => {
     if (!pagination) return
     if (newPage < 1 || newPage > pagination.totalPages) return
@@ -98,6 +106,7 @@ function App() {
         searchText={searchText}
         onSearchTextChange={setSearchText}
         onSearchSubmit={handleSearch}
+        onSearchClear={handleClearSearch}
       />
 
       <main className="app__shell">
@@ -109,16 +118,20 @@ function App() {
           <div className="search-panel">
             {error && <div className="search-error">{error}</div>}
 
-            <div className="mobile-filters-trigger">
-              <button
-                type="button"
-                className="mobile-filters-trigger__btn"
-                onClick={() => setIsMobileFiltersOpen(true)}
-                aria-label="Open filters"
-              >
-                <SlidersHorizontal size={18} />
-                <span>Filters</span>
-              </button>
+            <div className="mobile-grid-toolbar">
+              <span className="mobile-grid-toolbar__label">Products</span>
+
+              <div className="mobile-filters-trigger">
+                <button
+                  type="button"
+                  className="mobile-filters-trigger__btn"
+                  onClick={() => setIsMobileFiltersOpen(true)}
+                  aria-label="Open filters"
+                >
+                  <SlidersHorizontal size={16} />
+                  <span>Filters</span>
+                </button>
+              </div>
             </div>
 
             <ProductGrid

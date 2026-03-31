@@ -2,6 +2,7 @@
 
 .app {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -13,6 +14,7 @@
   max-width: 1280px;
   margin: 88px auto 0;
   height: calc(100vh - 88px);
+  height: calc(100dvh - 88px);
   padding: 2rem 1.5rem 3rem;
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
@@ -40,6 +42,8 @@
 .search-panel__pagination {
   width: 100%;
   margin-top: -0.25rem;
+  flex-shrink: 0;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.25rem);
 }
 
 .search-panel > .product-grid-section {
@@ -55,13 +59,38 @@
   display: none;
 }
 
+.mobile-grid-toolbar {
+  display: none;
+}
+
 @media (max-width: 1024px) {
+  .search-panel {
+    gap: 1rem;
+  }
+
+  .mobile-grid-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.1rem 0.1rem 0;
+  }
+
+  .mobile-grid-toolbar__label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: ui.$on-surface-variant;
+  }
+
   .app__shell {
     grid-template-columns: 1fr;
     gap: 1rem;
-    padding: 1.25rem 1rem 1.5rem;
+    padding: 1.25rem 1rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
     margin-top: 80px;
     height: calc(100vh - 80px);
+    height: calc(100dvh - 80px);
   }
 
   .app__sidebar-desktop {
@@ -70,21 +99,23 @@
 
   .mobile-filters-trigger {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
   }
 
   .mobile-filters-trigger__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    border: 1px solid ui.$outline-variant;
+    gap: 0.4rem;
+    border: 1px solid rgba(79, 70, 229, 0.14);
     border-radius: 999px;
-    background: ui.$surface-container-lowest;
-    color: ui.$on-surface;
-    font-weight: 600;
-    padding: 0.6rem 1rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
+    color: ui.$primary;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.55rem 0.9rem;
     cursor: pointer;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
   }
 }
 
@@ -92,14 +123,33 @@
   .app__shell {
     margin-top: 128px;
     height: calc(100vh - 128px);
+    height: calc(100dvh - 128px);
   }
 }
 
 @media (max-width: 640px) {
+  .search-panel {
+    gap: 0.85rem;
+  }
+
   .app__shell {
-    padding: 1rem 0.75rem 1.25rem;
+    padding: 1rem 0.75rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
     margin-top: 120px;
     height: calc(100vh - 120px);
+    height: calc(100dvh - 120px);
+  }
+
+  .mobile-grid-toolbar {
+    padding-inline: 0.15rem;
+  }
+
+  .mobile-grid-toolbar__label {
+    font-size: 0.78rem;
+  }
+
+  .mobile-filters-trigger__btn {
+    padding: 0.5rem 0.82rem;
+    font-size: 0.84rem;
   }
 }
 
@@ -107,6 +157,7 @@
   .app__shell {
     margin-top: 118px;
     height: calc(100vh - 118px);
+    height: calc(100dvh - 118px);
   }
 }
 
