@@ -13,7 +13,7 @@ const Navbar = ({ searchText, onSearchTextChange, onSearchSubmit, onSearchClear 
 
         <form className="navbar__search" onSubmit={onSearchSubmit}>
           <div className="navbar__search-wrap">
-            <Search className="navbar__search-icon" />
+            {/* <Search className="navbar__search-icon" /> */}
             <input
               className="navbar__search-input"
               type="text"
