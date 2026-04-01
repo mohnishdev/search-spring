@@ -48,10 +48,13 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false)
-  const [availability, setAvailability] = useState('all')
   const [sortBy, setSortBy] = useState('relevance:desc')
   const [sortChangeSeq, setSortChangeSeq] = useState(0)
   const [sortOptions, setSortOptions] = useState(DEFAULT_SORT_OPTIONS)
+  const [brandOptions, setBrandOptions] = useState([])
+  const [colorOptions, setColorOptions] = useState([])
+  const [selectedBrands, setSelectedBrands] = useState([])
+  const [selectedColors, setSelectedColors] = useState([])
   const [priceRange, setPriceRange] = useState(0)
   const [priceSliderMax, setPriceSliderMax] = useState(0)
   const [hasUserAdjustedPrice, setHasUserAdjustedPrice] = useState(false)
@@ -62,6 +65,7 @@ function App() {
   }, [results])
 
   const filteredResults = useMemo(() => results, [results])
+  const totalResultsCount = pagination?.totalResults ?? filteredResults.length
 
   useEffect(() => {
     if (!query.trim()) {
@@ -84,19 +88,34 @@ function App() {
         filters: {
           sortField: sortBy.split(':')[0] || 'relevance',
           sortDirection: sortBy.split(':')[1] || 'desc',
-          availability,
+          brands: selectedBrands,
+          colorFamilies: selectedColors,
           priceHigh:
             hasUserAdjustedPrice && priceSliderMax > 0 && priceRange < priceSliderMax
               ? priceRange
               : null,
         },
       })
-      .then(({ data, pagination: pageData, sorting }) => {
+      .then(({ data, pagination: pageData, sorting, facets }) => {
         if (!isActive) return
         setResults(data ?? [])
         setPagination(pageData ?? null)
         const nextSortOptions = normalizeSortingOptions(sorting)
         setSortOptions(nextSortOptions.length ? nextSortOptions : DEFAULT_SORT_OPTIONS)
+
+        const brandFacet = facets?.find((facet) => facet.field === 'brand')
+        const colorFacet = facets?.find((facet) => facet.field === 'color_family')
+
+        setBrandOptions(
+          (brandFacet?.values ?? [])
+            .filter((value) => value?.value && value?.label)
+            .map((value) => ({ value: value.value, label: value.label }))
+        )
+        setColorOptions(
+          (colorFacet?.values ?? [])
+            .filter((value) => value?.value && value?.label)
+            .map((value) => ({ value: value.value, label: value.label }))
+        )
       })
       .catch((err) => {
         console.error(err)
@@ -111,7 +130,17 @@ function App() {
     return () => {
       isActive = false
     }
-  }, [query, page, availability, priceRange, hasUserAdjustedPrice, priceSliderMax, sortBy, sortChangeSeq])
+  }, [
+    query,
+    page,
+    priceRange,
+    hasUserAdjustedPrice,
+    priceSliderMax,
+    sortBy,
+    sortChangeSeq,
+    selectedBrands,
+    selectedColors,
+  ])
 
   useEffect(() => {
     if (responseMaxPrice <= 0) return
@@ -121,6 +150,28 @@ function App() {
       setPriceRange(responseMaxPrice)
     }
   }, [responseMaxPrice, hasUserAdjustedPrice])
+
+  useEffect(() => {
+    setSelectedBrands((previous) => {
+      const allowed = new Set(brandOptions.map((option) => option.value))
+      const next = previous.filter((value) => allowed.has(value))
+      if (next.length === previous.length && next.every((value, index) => value === previous[index])) {
+        return previous
+      }
+      return next
+    })
+  }, [brandOptions])
+
+  useEffect(() => {
+    setSelectedColors((previous) => {
+      const allowed = new Set(colorOptions.map((option) => option.value))
+      const next = previous.filter((value) => allowed.has(value))
+      if (next.length === previous.length && next.every((value, index) => value === previous[index])) {
+        return previous
+      }
+      return next
+    })
+  }, [colorOptions])
 
   useEffect(() => {
     if (!isMobileFiltersOpen) return undefined
@@ -178,14 +229,6 @@ function App() {
     setSortChangeSeq((prev) => prev + 1)
   }
 
-  const handleAvailabilityChange = (value) => {
-    if (value === availability) return
-    setIsLoading(true)
-    setResults([])
-    setPage(1)
-    setAvailability(value)
-  }
-
   const handlePriceChange = (value) => {
     if (value === priceRange && hasUserAdjustedPrice) return
     setIsLoading(true)
@@ -195,15 +238,73 @@ function App() {
     setPriceRange(value)
   }
 
+  const handleClearFilters = () => {
+    setIsLoading(true)
+    setResults([])
+    setPage(1)
+    setSelectedBrands([])
+    setSelectedColors([])
+    setHasUserAdjustedPrice(false)
+    setPriceRange(priceSliderMax || 0)
+  }
+
+  const handleBrandToggle = (value) => {
+    setIsLoading(true)
+    setResults([])
+    setPage(1)
+    setSelectedBrands((previous) =>
+      previous.includes(value)
+        ? previous.filter((item) => item !== value)
+        : [...previous, value]
+    )
+  }
+
+  const handleColorToggle = (value) => {
+    setIsLoading(true)
+    setResults([])
+    setPage(1)
+    setSelectedColors((previous) =>
+      previous.includes(value)
+        ? previous.filter((item) => item !== value)
+        : [...previous, value]
+    )
+  }
+
   const filtersProps = {
     priceRange,
     maxPrice: priceSliderMax,
     onPriceChange: handlePriceChange,
-    availability,
-    onAvailabilityChange: handleAvailabilityChange,
+    brandOptions,
+    selectedBrands,
+    onBrandToggle: handleBrandToggle,
+    colorOptions,
+    selectedColors,
+    onColorToggle: handleColorToggle,
     sortBy,
     sortOptions,
     onSortByChange: handleSortChange,
+    onClearFilters: handleClearFilters,
+  }
+
+  const mobileFiltersProps = {
+    ...filtersProps,
+    showSort: false,
+    onPriceChange: (value) => {
+      handlePriceChange(value)
+      setIsMobileFiltersOpen(false)
+    },
+    onBrandToggle: (value) => {
+      handleBrandToggle(value)
+      setIsMobileFiltersOpen(false)
+    },
+    onColorToggle: (value) => {
+      handleColorToggle(value)
+      setIsMobileFiltersOpen(false)
+    },
+    onClearFilters: () => {
+      handleClearFilters()
+      setIsMobileFiltersOpen(false)
+    },
   }
 
   return (
@@ -228,7 +329,7 @@ function App() {
               <span className="mobile-grid-toolbar__label">Products</span>
 
               <div className="mobile-grid-toolbar__meta">
-                <span>{filteredResults.length} items</span>
+                <span>{totalResultsCount} items</span>
                 <label className="mobile-grid-toolbar__sort">
                   <span>Sort</span>
                   <select
@@ -302,7 +403,7 @@ function App() {
                 <X size={18} />
               </button>
             </div>
-            <Filters {...filtersProps} />
+            <Filters {...mobileFiltersProps} />
           </div>
         </div>
       )}

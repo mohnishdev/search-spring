@@ -22,8 +22,22 @@ const buildSearchUrl = ({ query = '', resultsFormat = 'native', page = '1', filt
       })
   }
 
-  if (filters.availability === 'in-stock') {
-    params.set('filter.quantity_available.low', '1')
+  if (Array.isArray(filters.brands)) {
+    filters.brands
+      .map((value) => String(value).trim())
+      .filter(Boolean)
+      .forEach((value) => {
+        params.append('filter.brand', value)
+      })
+  }
+
+  if (Array.isArray(filters.colorFamilies)) {
+    filters.colorFamilies
+      .map((value) => String(value).trim())
+      .filter(Boolean)
+      .forEach((value) => {
+        params.append('filter.color_family', value)
+      })
   }
 
   if (
@@ -55,6 +69,7 @@ const searchspring = {
       data: data.results ?? [],
       pagination: data.pagination ?? null,
       sorting: data.sorting?.options ?? [],
+      facets: data.facets ?? [],
     }
   },
 }
