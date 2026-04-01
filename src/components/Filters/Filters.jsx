@@ -1,58 +1,48 @@
-import React, { useState } from 'react';
 import './Filters.scss';
 
-const CATEGORIES = [
-  { id: 'new-arrivals', label: 'New Arrivals' },
-  { id: 'tech-essentials', label: 'Tech Essentials' },
-  { id: 'apparel', label: 'Apparel' },
-  { id: 'home-studio', label: 'Home Studio' },
+const SORT_OPTIONS = [
+  { value: 'relevance:desc', label: 'Best Match' },
+  { value: 'sales_rank:desc', label: 'Best Sellers' },
+  { value: 'price:desc', label: 'Price ($$$ - $)' },
+  { value: 'days_since_published:desc', label: 'Recently Added' },
+  { value: 'title:asc', label: 'Name (A - Z)' },
+  { value: 'title:desc', label: 'Name (Z - A)' },
+  { value: 'sale_price:desc', label: 'Highest Rated' },
+  { value: 'price:asc', label: 'Price ($ - $$$)' },
 ];
 
-const Filters = () => {
-  const [checkedCategories, setCheckedCategories] = useState(['new-arrivals']);
-  const [priceRange, setPriceRange] = useState(2500);
-  const [availability, setAvailability] = useState('in-stock');
-
-  const toggleCategory = (id) => {
-    setCheckedCategories((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
-    );
-  };
+const Filters = ({
+  sortOptions = SORT_OPTIONS,
+  priceRange = 0,
+  maxPrice = 0,
+  onPriceChange,
+  availability = 'all',
+  onAvailabilityChange,
+  sortBy = 'relevance',
+  onSortByChange,
+}) => {
+  const effectiveMaxPrice = Math.max(maxPrice, 0);
+  const sliderValue = Math.min(priceRange, effectiveMaxPrice || priceRange || 0);
+  const sliderWidth =
+    effectiveMaxPrice > 0 ? `${(sliderValue / effectiveMaxPrice) * 100}%` : '0%';
 
   return (
     <div className="filters">
-      {/* Categories */}
       <section className="filters__section">
-        <h3 className="filters__heading">Categories</h3>
-        <div className="filters__category-list">
-          {CATEGORIES.map((cat) => {
-            const checked = checkedCategories.includes(cat.id);
-            return (
-              <label key={cat.id} className="filters__label">
-                <span
-                  className={`filters__checkbox ${checked ? 'filters__checkbox--checked' : ''}`}
-                  onClick={() => toggleCategory(cat.id)}
-                  role="checkbox"
-                  aria-checked={checked}
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === ' ' && toggleCategory(cat.id)}
-                >
-                  {checked && (
-                    <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
-                      <path
-                        d="M1 5L4.5 8.5L11 1.5"
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  )}
-                </span>
-                <span className="filters__label-text">{cat.label}</span>
-              </label>
-            );
-          })}
+        <h3 className="filters__heading">Sort By</h3>
+        <div className="filters__sort">
+          <select
+            className="filters__select"
+            value={sortBy}
+            onChange={(event) => onSortByChange?.(event.target.value)}
+            onInput={(event) => onSortByChange?.(event.target.value)}
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
       </section>
 
@@ -64,19 +54,22 @@ const Filters = () => {
             <input
               type="range"
               min={0}
-              max={2500}
-              value={priceRange}
-              onChange={(e) => setPriceRange(Number(e.target.value))}
+              max={effectiveMaxPrice || 0}
+              value={sliderValue}
+              onChange={(event) => onPriceChange?.(Number(event.target.value))}
               className="filters__slider"
+              disabled={effectiveMaxPrice === 0}
             />
             <div
               className="filters__slider-fill"
-              style={{ width: `${(priceRange / 2500) * 100}%` }}
+              style={{ width: sliderWidth }}
             />
           </div>
           <div className="filters__price-labels">
             <span className="filters__price-label">$0</span>
-            <span className="filters__price-label">${priceRange.toLocaleString()}</span>
+            <span className="filters__price-label">
+              ${sliderValue.toLocaleString()}
+            </span>
           </div>
         </div>
       </section>
@@ -87,13 +80,19 @@ const Filters = () => {
         <div className="filters__availability">
           <button
             className={`filters__pill ${availability === 'in-stock' ? 'filters__pill--active' : ''}`}
-            onClick={() => setAvailability('in-stock')}
+            onClick={() => onAvailabilityChange?.('in-stock')}
           >
             In Stock
           </button>
           <button
+            className={`filters__pill ${availability === 'all' ? 'filters__pill--active' : ''}`}
+            onClick={() => onAvailabilityChange?.('all')}
+          >
+            All
+          </button>
+          <button
             className={`filters__pill ${availability === 'pre-order' ? 'filters__pill--active' : ''}`}
-            onClick={() => setAvailability('pre-order')}
+            onClick={() => onAvailabilityChange?.('pre-order')}
           >
             Pre-order
           </button>

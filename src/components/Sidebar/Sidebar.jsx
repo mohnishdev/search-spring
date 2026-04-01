@@ -3,10 +3,10 @@ import Filters from '../Filters/Filters';
 import FeaturedImage from '../FeaturedImage/FeaturedImage';
 import './Sidebar.scss';
 
-const Sidebar = () => {
+const Sidebar = (props) => {
   return (
     <aside className="sidebar">
-      <Filters />
+      <Filters {...props} />
       <FeaturedImage />
     </aside>
   );

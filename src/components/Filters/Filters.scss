@@ -33,6 +33,26 @@
     }
   }
 
+  &__sort {
+    width: 100%;
+  }
+
+  &__select {
+    width: 100%;
+    border: 1px solid ui.$filters-border-color;
+    border-radius: 10px;
+    background: #ffffff;
+    color: ui.$filters-text-dark;
+    padding: 0.75rem 0.9rem;
+    font: inherit;
+    outline: none;
+
+    &:focus-visible {
+      border-color: ui.$primary;
+      box-shadow: 0 0 0 2px rgba(ui.$primary, 0.15);
+    }
+  }
+
   &__category-list {
     display: flex;
     flex-direction: column;
@@ -44,6 +64,13 @@
     align-items: center;
     gap: 12px;
     cursor: pointer;
+    position: relative;
+  }
+
+  &__checkbox-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
   }
 
   &__checkbox {
@@ -164,6 +191,7 @@
     display: flex;
     align-items: flex-start;
     gap: 8px;
+    flex-wrap: wrap;
   }
 
   &__pill {
